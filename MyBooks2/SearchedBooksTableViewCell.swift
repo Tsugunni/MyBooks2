@@ -38,9 +38,11 @@ class SearchedBooksTableViewCell: UITableViewCell {
         button.translatesAutoresizingMaskIntoConstraints = false
         let image = UIImage(systemName: "plus")
         button.setImage(image, for: .normal)
+//        button.addTarget(self, action: #selector(tapButton(_:)), for: .touchUpInside)
         return button
     }()
 
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -48,14 +50,12 @@ class SearchedBooksTableViewCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
         
-        addSubview(bookImageView)
+        contentView.addSubview(bookImageView)
         NSLayoutConstraint.activate([
             bookImageView.widthAnchor.constraint(equalToConstant: 70),
             bookImageView.leftAnchor.constraint(equalTo: leftAnchor, constant: 12.0),
@@ -63,32 +63,29 @@ class SearchedBooksTableViewCell: UITableViewCell {
             bookImageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0.0)
         ])
         
-        addSubview(addButton)
+        contentView.addSubview(addButton)
         NSLayoutConstraint.activate([
             addButton.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 0.0),
             addButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -24.0),
-            addButton.widthAnchor.constraint(equalToConstant: 18.0)
+            addButton.widthAnchor.constraint(equalToConstant: 24.0)
         ])
         
-        addSubview(titleLabel)
+        contentView.addSubview(titleLabel)
         NSLayoutConstraint.activate([
             titleLabel.leftAnchor.constraint(equalTo: bookImageView.rightAnchor, constant: 12.0),
             titleLabel.rightAnchor.constraint(lessThanOrEqualTo: addButton.leftAnchor, constant: -12.0),
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 10.0)
         ])
         
-        addSubview(authorsLabel)
+        contentView.addSubview(authorsLabel)
         NSLayoutConstraint.activate([
             authorsLabel.leftAnchor.constraint(equalTo: bookImageView.rightAnchor, constant: 10.0),
             authorsLabel.rightAnchor.constraint(lessThanOrEqualTo: addButton.leftAnchor, constant: -12.0),
             authorsLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5.0)
         ])
-        
-        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 }

@@ -62,6 +62,15 @@ class SearchedBooksTableViewController: UIViewController, UITableViewDelegate, U
         self.tableView.reloadData()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didChangeOrientation(_:)),
+            name: UIDevice.orientationDidChangeNotification,
+            object: nil
+        )
+    }
+
     
     //MARK: Setup
     
@@ -91,6 +100,12 @@ class SearchedBooksTableViewController: UIViewController, UITableViewDelegate, U
             navigationItem.titleView?.frame = searchBar.frame
             self.searchBar = searchBar
         }
+    }
+    
+    @objc private func didChangeOrientation(_ notification: Notification) {
+        tableView.frame.size = CGSize(width: view.frame.width, height: view.frame.height)
+        tableView.setNeedsDisplay()
+        tableView.reloadData()
     }
     
     
@@ -209,8 +224,61 @@ extension SearchedBooksTableViewController: UITableViewDataSource {
         cell.bookImageView.image = book.image
         cell.titleLabel.text = book.title
         cell.authorsLabel.text = book.authors
+        cell.addButton.tag = indexPath.row
+        cell.addButton.addTarget(self, action: #selector(tapButton(_:)), for: .touchUpInside)
+        
+        if myBooks.contains(book) {
+            cell.addButton.isHidden = true
+        } else {
+            cell.addButton.isHidden = false
+        }
         
         return cell
+    }
+    
+    @objc func tapButton(_ sender: UIButton) {
+        let book = searchedBooks[sender.tag]
+        if myBooks.contains(book) {
+            return
+        }
+        let indexPath = IndexPath(row: sender.tag, section: 0)
+        
+        let alertController = UIAlertController(title: "読書状況", message: "選択してください", preferredStyle: .actionSheet)
+        
+        let wantToReadAction = UIAlertAction(title: "読みたい", style: .default, handler: { (action) in
+            book.status = "読みたい"
+            myBooks.append(book)
+            if myBooks.contains(book) {
+                self.tableView.reloadRows(at: [indexPath], with: .none)
+            }
+        })
+        alertController.addAction(wantToReadAction)
+        
+        let readingAction = UIAlertAction(title: "読んでる", style: .default, handler: { (action) in
+            book.status = "読んでる"
+            myBooks.append(book)
+            if myBooks.contains(book) {
+                self.tableView.reloadRows(at: [indexPath], with: .none)
+            }
+        })
+        alertController.addAction(readingAction)
+        
+        let readAction = UIAlertAction(title: "読んだ", style: .default, handler: { (action) in
+            book.status = "読んだ"
+            myBooks.append(book)
+            if myBooks.contains(book) {
+                self.tableView.reloadRows(at: [indexPath], with: .none)
+            }
+        })
+        alertController.addAction(readAction)
+        
+        let cancelAction = UIAlertAction(title: "キャンセル", style: .cancel, handler: nil)
+        alertController.addAction(cancelAction)
+        
+        alertController.popoverPresentationController?.sourceView = view
+        
+        present(alertController, animated: true, completion: nil)
+        
     }
 }
 
